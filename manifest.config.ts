@@ -18,6 +18,8 @@ export default defineManifest({
     {
       js: ['src/content/main.ts'],
       matches: ['https://*/*'],
+      run_at: 'document_idle',
+      all_frames: false,
     },
   ],
   permissions: ['sidePanel', 'contentSettings'],

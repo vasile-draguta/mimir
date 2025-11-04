@@ -1,24 +1,188 @@
-<script>
-  import Logo from '@/assets/crx.svg';
+<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import { sanitizeText, validateText } from '../utils';
+  import { useDarkMode } from '../composables/useDarkMode.svelte';
+  import Popover from './Popover.svelte';
 
-  let show = $state(false);
+  let popoverOpen = $state(false);
+  let selectedText = $state('');
+  let popoverPosition = $state({ x: 0, y: 0 });
+  let popoverPlacement = $state<'top' | 'bottom'>('top');
+  let contextData = $state<{ title: string; description: string } | null>(null);
+  let isLoading = $state(false);
+  let popoverElement = $state<HTMLDivElement | null>(null);
+
+  const { updateDarkMode } = useDarkMode(() => popoverElement);
+
+  let holdTimer: number | null = null;
+  let isMouseDown = $state(false);
+  let selectedTextAtMouseDown = '';
+  const HOLD_DURATION = 500;
+  const MAX_SELECTION_LENGTH = 1000;
+  const POPOVER_MAX_HEIGHT = 400;
+  const POPOVER_WIDTH = 448;
+  const POPOVER_MARGIN = 16;
+
+  function getSelectionText(): string {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return '';
+
+    const rawText = selection.toString();
+
+    return sanitizeText(rawText);
+  }
+
+  function getSelectionPosition(): { x: number; y: number } {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return { x: 0, y: 0 };
+
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+
+    const popoverHeight = POPOVER_MAX_HEIGHT;
+
+    if (spaceAbove >= popoverHeight + POPOVER_MARGIN) {
+      popoverPlacement = 'top';
+    } else if (spaceBelow >= popoverHeight + POPOVER_MARGIN) {
+      popoverPlacement = 'bottom';
+    } else {
+      popoverPlacement = spaceAbove > spaceBelow ? 'top' : 'bottom';
+    }
+
+    const centerX = rect.left + rect.width / 2;
+    const halfPopoverWidth = POPOVER_WIDTH / 2;
+
+    let x = centerX;
+    const minX = halfPopoverWidth + POPOVER_MARGIN;
+    const maxX = window.innerWidth - halfPopoverWidth - POPOVER_MARGIN;
+
+    if (x < minX) {
+      x = minX;
+    } else if (x > maxX) {
+      x = maxX;
+    }
+
+    const y =
+      popoverPlacement === 'top'
+        ? rect.top - POPOVER_MARGIN
+        : rect.bottom + POPOVER_MARGIN;
+
+    return { x, y };
+  }
+
+  function startHoldTimer() {
+    clearHoldTimer();
+
+    const text = getSelectionText();
+    if (!text || !isMouseDown) return;
+
+    if (text.length > MAX_SELECTION_LENGTH) return;
+
+    selectedTextAtMouseDown = text;
+
+    holdTimer = window.setTimeout(() => {
+      const currentText = getSelectionText();
+      if (
+        currentText &&
+        currentText === selectedTextAtMouseDown &&
+        isMouseDown
+      ) {
+        selectedText = currentText;
+        popoverPosition = getSelectionPosition();
+        popoverOpen = true;
+        updateDarkMode();
+        fetchContext(selectedText);
+      }
+    }, HOLD_DURATION);
+  }
+
+  function clearHoldTimer() {
+    if (holdTimer !== null) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  }
+
+  function handleMouseDown(event: MouseEvent) {
+    if (event.button !== 0) return;
+
+    if (popoverElement && !popoverElement.contains(event.target as Node)) {
+      popoverOpen = false;
+      return;
+    }
+
+    isMouseDown = true;
+
+    if (getSelectionText()) {
+      startHoldTimer();
+    }
+  }
+
+  function handleMouseUp() {
+    isMouseDown = false;
+    clearHoldTimer();
+  }
+
+  function handleSelectionChange() {
+    if (isMouseDown) {
+      getSelectionText() ? startHoldTimer() : clearHoldTimer();
+    }
+  }
+
+  async function fetchContext(text: string) {
+    isLoading = true;
+    contextData = null;
+
+    try {
+      if (!validateText(text, MAX_SELECTION_LENGTH)) {
+        throw new Error('Invalid text selection');
+      }
+
+      const sanitizedText = sanitizeText(text);
+
+      // TODO: LLM API call
+
+      contextData = {
+        title: `${sanitizedText.substring(0, 10)}...`,
+        description: sanitizedText,
+      };
+    } catch (error) {
+      console.error('[Mimir] Fetch error:', error);
+      contextData = {
+        title: 'Error',
+        description: 'Failed to fetch context.',
+      };
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function handleElementBind(element: HTMLDivElement | null) {
+    popoverElement = element;
+  }
+
+  onMount(() => {
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('selectionchange', handleSelectionChange);
+  });
+
+  onDestroy(() => {
+    document.removeEventListener('mousedown', handleMouseDown);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('selectionchange', handleSelectionChange);
+    if (holdTimer !== null) {
+      clearTimeout(holdTimer);
+    }
+  });
 </script>
 
-<div
-  class="fixed right-0 bottom-0 m-5 z-100 flex items-end font-sans select-none leading-none"
->
-  <div
-    class="bg-white text-gray-800 rounded-lg shadow-lg w-max h-min px-4 py-2 mr-2 mb-0 transition-opacity duration-300"
-    class:opacity-100={show}
-    class:opacity-0={!show}
-    style="display: {show ? 'block' : 'none'}"
-  >
-    <h1>HELLO CRXJS</h1>
-  </div>
-  <button
-    class="flex justify-center w-10 h-10 rounded-full shadow-md cursor-pointer border-0 bg-[#288cd7] hover:bg-[#1e6aa3]"
-    onclick={() => (show = !show)}
-  >
-    <img src={Logo} alt="CRXJS logo" class="p-1" />
-  </button>
-</div>
+<Popover
+  isOpen={popoverOpen && !!selectedText}
+  position={popoverPosition}
+  placement={popoverPlacement}
+  {isLoading}
+  {contextData}
+  onElementBind={handleElementBind}
+/>
