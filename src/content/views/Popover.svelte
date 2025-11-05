@@ -36,7 +36,7 @@
     }}
     class="mimir-popover"
     style="
-      position: fixed;
+      position: absolute;
       left: {position.x}px;
       top: {position.y}px;
       transform: translate(-50%, {placement === 'top' ? '-100%' : '0%'});

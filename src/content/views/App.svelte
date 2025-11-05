@@ -37,6 +37,10 @@
     if (!selection || selection.rangeCount === 0) return { x: 0, y: 0 };
 
     const rect = selection.getRangeAt(0).getBoundingClientRect();
+
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
     const spaceAbove = rect.top;
     const spaceBelow = window.innerHeight - rect.bottom;
 
@@ -65,10 +69,10 @@
 
     const y =
       popoverPlacement === 'top'
-        ? rect.top - POPOVER_MARGIN
-        : rect.bottom + POPOVER_MARGIN;
+        ? rect.top - POPOVER_MARGIN + scrollY
+        : rect.bottom + POPOVER_MARGIN + scrollY;
 
-    return { x, y };
+    return { x: x + scrollX, y };
   }
 
   function startHoldTimer() {
@@ -124,6 +128,14 @@
     clearHoldTimer();
   }
 
+  function handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      popoverOpen = false;
+      handleMouseUp();
+    }
+  }
+
   function handleSelectionChange() {
     if (isMouseDown) {
       getSelectionText() ? startHoldTimer() : clearHoldTimer();
@@ -166,12 +178,14 @@
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('selectionchange', handleSelectionChange);
+    document.addEventListener('keydown', handleEscapeKey);
   });
 
   onDestroy(() => {
     document.removeEventListener('mousedown', handleMouseDown);
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('selectionchange', handleSelectionChange);
+    document.removeEventListener('keydown', handleEscapeKey);
     if (holdTimer !== null) {
       clearTimeout(holdTimer);
     }

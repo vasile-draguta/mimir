@@ -10,7 +10,7 @@ function mountApp() {
   container.className = 'mimir-extension';
 
   container.style.cssText = `
-    position: fixed;
+    position: absolute;
     top: 0; left: 0;
     width: 0; height: 0;
     pointer-events: none;
