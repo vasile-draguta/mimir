@@ -6,7 +6,7 @@
     position: { x: number; y: number };
     placement: 'top' | 'bottom';
     isLoading: boolean;
-    contextData: { title: string; description: string } | null;
+    contextData: string | null;
     onElementBind?: (element: HTMLDivElement | null) => void;
   }
 
@@ -84,16 +84,10 @@
         </div>
       {:else if contextData}
         <div>
-          <h3
-            style="font-size: 16px; font-weight: 600; line-height: 1.2; margin-bottom: 12px;"
-          >
-            {contextData.title}
-          </h3>
-
           <p
-            style="color: var(--muted-foreground); white-space: pre-wrap; font-size: 14px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;"
+            style="color: var(--foreground); white-space: pre-wrap; font-size: 14px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;"
           >
-            {contextData.description}
+            {contextData}
           </p>
         </div>
       {:else}

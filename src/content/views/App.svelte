@@ -3,12 +3,13 @@
   import { sanitizeText, validateText } from '../utils';
   import { useDarkMode } from '../composables/useDarkMode.svelte';
   import Popover from './Popover.svelte';
+  import { generateContext } from '../api/llm';
 
   let popoverOpen = $state(false);
   let selectedText = $state('');
   let popoverPosition = $state({ x: 0, y: 0 });
   let popoverPlacement = $state<'top' | 'bottom'>('top');
-  let contextData = $state<{ title: string; description: string } | null>(null);
+  let contextData = $state<string | null>(null);
   let isLoading = $state(false);
   let popoverElement = $state<HTMLDivElement | null>(null);
 
@@ -153,18 +154,12 @@
 
       const sanitizedText = sanitizeText(text);
 
-      // TODO: LLM API call
+      const context = await generateContext(sanitizedText);
 
-      contextData = {
-        title: `${sanitizedText.substring(0, 10)}...`,
-        description: sanitizedText,
-      };
+      contextData = context;
     } catch (error) {
       console.error('[Mimir] Fetch error:', error);
-      contextData = {
-        title: 'Error',
-        description: 'Failed to fetch context.',
-      };
+      contextData = 'Failed to fetch context';
     } finally {
       isLoading = false;
     }
