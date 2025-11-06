@@ -23,6 +23,7 @@
   const POPOVER_MAX_HEIGHT = 400;
   const POPOVER_WIDTH = 448;
   const POPOVER_MARGIN = 16;
+  const POPOVER_MIN_SPACING = 32;
 
   function getSelectionText(): string {
     const selection = window.getSelection();
@@ -46,10 +47,11 @@
     const spaceBelow = window.innerHeight - rect.bottom;
 
     const popoverHeight = POPOVER_MAX_HEIGHT;
+    const requiredSpace = popoverHeight + POPOVER_MIN_SPACING;
 
-    if (spaceAbove >= popoverHeight + POPOVER_MARGIN) {
+    if (spaceAbove >= requiredSpace) {
       popoverPlacement = 'top';
-    } else if (spaceBelow >= popoverHeight + POPOVER_MARGIN) {
+    } else if (spaceBelow >= requiredSpace) {
       popoverPlacement = 'bottom';
     } else {
       popoverPlacement = spaceAbove > spaceBelow ? 'top' : 'bottom';
@@ -70,8 +72,8 @@
 
     const y =
       popoverPlacement === 'top'
-        ? rect.top - POPOVER_MARGIN + scrollY
-        : rect.bottom + POPOVER_MARGIN + scrollY;
+        ? rect.top - POPOVER_MIN_SPACING + scrollY
+        : rect.bottom + POPOVER_MIN_SPACING + scrollY;
 
     return { x: x + scrollX, y };
   }
@@ -137,6 +139,30 @@
     }
   }
 
+  function handleKeybind(event: KeyboardEvent) {
+    if (
+      event.key === 'k' &&
+      event.metaKey &&
+      !event.shiftKey &&
+      !event.altKey &&
+      !event.ctrlKey
+    ) {
+      event.preventDefault();
+
+      const currentSelection = getSelectionText();
+      if (!currentSelection || currentSelection.length > MAX_SELECTION_LENGTH) {
+        return;
+      }
+
+      const position = getSelectionPosition();
+
+      selectedText = currentSelection;
+      popoverPosition = position;
+      updateDarkMode();
+      fetchContext(selectedText);
+      popoverOpen = true;
+    }
+  }
   function handleSelectionChange() {
     if (isMouseDown) {
       getSelectionText() ? startHoldTimer() : clearHoldTimer();
@@ -174,6 +200,7 @@
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('selectionchange', handleSelectionChange);
     document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', handleKeybind);
   });
 
   onDestroy(() => {
@@ -181,6 +208,7 @@
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('selectionchange', handleSelectionChange);
     document.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener('keydown', handleKeybind);
     if (holdTimer !== null) {
       clearTimeout(holdTimer);
     }
