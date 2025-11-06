@@ -1,13 +1,12 @@
 import { mount } from 'svelte';
 import App from './views/App.svelte';
-import './style.css';
+import styleContent from './style.css?inline';
 
 function mountApp() {
   if (!document.body || document.getElementById('mimir-app')) return;
 
   const container = document.createElement('div');
   container.id = 'mimir-app';
-  container.className = 'mimir-extension';
 
   container.style.cssText = `
     position: absolute;
@@ -19,7 +18,26 @@ function mountApp() {
   `;
 
   document.body.appendChild(container);
-  mount(App, { target: container });
+
+  const shadowRoot = container.attachShadow({ mode: 'open' });
+
+  const shadowContainer = document.createElement('div');
+  shadowContainer.className = 'mimir-extension';
+  shadowContainer.style.cssText = `
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  `;
+
+  const style = document.createElement('style');
+  style.textContent = styleContent;
+  shadowRoot.appendChild(style);
+  shadowRoot.appendChild(shadowContainer);
+
+  mount(App, { target: shadowContainer });
 }
 
 mountApp();
