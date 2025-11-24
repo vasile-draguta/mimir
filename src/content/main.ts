@@ -35,6 +35,24 @@ function mountApp() {
   const style = document.createElement('style');
   style.textContent = styleContent;
   shadowRoot.appendChild(style);
+
+  const svgFilters = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'svg'
+  );
+  svgFilters.setAttribute(
+    'style',
+    'position: absolute; width: 0; height: 0; visibility: hidden;'
+  );
+  svgFilters.innerHTML = `
+    <defs>
+      <filter id="mimir-glass-blur" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox">
+        <feTurbulence type="fractalNoise" baseFrequency="0.003 0.007" numOctaves="1" result="turbulence" />
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="200" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  `;
+  shadowRoot.appendChild(svgFilters);
   shadowRoot.appendChild(shadowContainer);
 
   mount(App, { target: shadowContainer });
