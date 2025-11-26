@@ -1,9 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { sanitizeText, validateText } from '../utils';
+  import { validateText } from '../utils';
   import { useDarkMode } from '../composables/useDarkMode.svelte';
   import Popover from './Popover.svelte';
-  import { generateContext } from '../api/llm';
+  import { generateContext, type SelectionContext } from '../api/llm';
+  import {
+    getSelectionWithContext,
+    getSelectionText,
+    getSelectionPosition,
+  } from '../utils/selection';
 
   let popoverOpen = $state(false);
   let selectedText = $state('');
@@ -18,65 +23,9 @@
   let holdTimer: number | null = null;
   let isMouseDown = $state(false);
   let selectedTextAtMouseDown = '';
+
   const HOLD_DURATION = 500;
   const MAX_SELECTION_LENGTH = 1000;
-  const POPOVER_MAX_HEIGHT = 400;
-  const POPOVER_WIDTH = 448;
-  const POPOVER_MARGIN = 16;
-  const POPOVER_MIN_SPACING = 32;
-
-  function getSelectionText(): string {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return '';
-
-    const rawText = selection.toString();
-
-    return sanitizeText(rawText);
-  }
-
-  function getSelectionPosition(): { x: number; y: number } {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return { x: 0, y: 0 };
-
-    const rect = selection.getRangeAt(0).getBoundingClientRect();
-
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    const spaceAbove = rect.top;
-    const spaceBelow = window.innerHeight - rect.bottom;
-
-    const popoverHeight = POPOVER_MAX_HEIGHT;
-    const requiredSpace = popoverHeight + POPOVER_MIN_SPACING;
-
-    if (spaceAbove >= requiredSpace) {
-      popoverPlacement = 'top';
-    } else if (spaceBelow >= requiredSpace) {
-      popoverPlacement = 'bottom';
-    } else {
-      popoverPlacement = spaceAbove > spaceBelow ? 'top' : 'bottom';
-    }
-
-    const centerX = rect.left + rect.width / 2;
-    const halfPopoverWidth = POPOVER_WIDTH / 2;
-
-    let x = centerX;
-    const minX = halfPopoverWidth + POPOVER_MARGIN;
-    const maxX = window.innerWidth - halfPopoverWidth - POPOVER_MARGIN;
-
-    if (x < minX) {
-      x = minX;
-    } else if (x > maxX) {
-      x = maxX;
-    }
-
-    const y =
-      popoverPlacement === 'top'
-        ? rect.top - POPOVER_MIN_SPACING + scrollY
-        : rect.bottom + POPOVER_MIN_SPACING + scrollY;
-
-    return { x: x + scrollX, y };
-  }
 
   function startHoldTimer() {
     clearHoldTimer();
@@ -89,17 +38,21 @@
     selectedTextAtMouseDown = text;
 
     holdTimer = window.setTimeout(() => {
-      const currentText = getSelectionText();
+      const selectionData = getSelectionWithContext();
+      const position = getSelectionPosition();
+
       if (
-        currentText &&
-        currentText === selectedTextAtMouseDown &&
+        selectionData &&
+        position &&
+        selectionData.text === selectedTextAtMouseDown &&
         isMouseDown
       ) {
-        selectedText = currentText;
-        popoverPosition = getSelectionPosition();
+        selectedText = selectionData.text;
+        popoverPosition = { x: position.x, y: position.y };
+        popoverPlacement = position.placement;
         popoverOpen = true;
         updateDarkMode();
-        fetchContext(selectedText);
+        fetchContext(selectionData.context);
       }
     }, HOLD_DURATION);
   }
@@ -149,38 +102,42 @@
     ) {
       event.preventDefault();
 
-      const currentSelection = getSelectionText();
-      if (!currentSelection || currentSelection.length > MAX_SELECTION_LENGTH) {
+      const selectionData = getSelectionWithContext();
+      const position = getSelectionPosition();
+
+      if (
+        !selectionData ||
+        !position ||
+        selectionData.text.length > MAX_SELECTION_LENGTH
+      ) {
         return;
       }
 
-      const position = getSelectionPosition();
-
-      selectedText = currentSelection;
-      popoverPosition = position;
+      selectedText = selectionData.text;
+      popoverPosition = { x: position.x, y: position.y };
+      popoverPlacement = position.placement;
       updateDarkMode();
-      fetchContext(selectedText);
+      fetchContext(selectionData.context);
       popoverOpen = true;
     }
   }
+
   function handleSelectionChange() {
     if (isMouseDown) {
       getSelectionText() ? startHoldTimer() : clearHoldTimer();
     }
   }
 
-  async function fetchContext(text: string) {
+  async function fetchContext(selectionContext: SelectionContext) {
     isLoading = true;
     contextData = null;
 
     try {
-      if (!validateText(text, MAX_SELECTION_LENGTH)) {
+      if (!validateText(selectionContext.selected, MAX_SELECTION_LENGTH)) {
         throw new Error('Invalid text selection');
       }
 
-      const sanitizedText = sanitizeText(text);
-
-      const context = await generateContext(sanitizedText);
+      const context = await generateContext(selectionContext);
 
       contextData = context;
     } catch (error) {

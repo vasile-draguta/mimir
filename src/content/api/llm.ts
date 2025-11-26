@@ -2,7 +2,30 @@ import { createGroq } from '@ai-sdk/groq';
 import { generateText } from 'ai';
 import { SYSTEM_PROMPT } from './system-prompt';
 
-export async function generateContext(text: string) {
+export interface SelectionContext {
+  selected: string;
+  before?: string;
+  after?: string;
+}
+
+function buildPrompt(context: SelectionContext): string {
+  let prompt =
+    'User task: Provide a contextual explanation for the highlighted text below.\n\n';
+
+  if (context.before) {
+    prompt += `[Preceding context]: ...${context.before}\n\n`;
+  }
+
+  prompt += `[Selected text]: ${context.selected}`;
+
+  if (context.after) {
+    prompt += `\n\n[Following context]: ${context.after}...`;
+  }
+
+  return prompt;
+}
+
+export async function generateContext(context: SelectionContext) {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
   if (!apiKey) {
@@ -15,13 +38,13 @@ export async function generateContext(text: string) {
     apiKey: apiKey,
   });
 
+  const prompt = buildPrompt(context);
+
   const response = await generateText({
     model: groq('llama-3.1-8b-instant'),
     system: SYSTEM_PROMPT,
-    prompt: `User task: Provide a contextual explanation for the text below.\n\nText: ${text}`,
+    prompt,
   });
-
-  console.log(response);
 
   return response.text;
 }
