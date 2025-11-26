@@ -105,21 +105,45 @@
 
 .liquidGlass-content::-webkit-scrollbar {
   width: 8px;
+  transition: opacity 0.3s ease;
 }
 
 .liquidGlass-content::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
+  transition: opacity 0.3s ease;
 }
 
 .liquidGlass-content::-webkit-scrollbar-thumb {
   background: var(--glass-highlight);
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: background 0.2s, opacity 0.3s ease;
 }
 
 .liquidGlass-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.6);
+}
+
+.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar {
+  opacity: 0;
+}
+
+.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-track {
+  opacity: 0;
+}
+
+.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-thumb {
+  opacity: 0;
+}
+
+.liquidGlass-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-highlight) rgba(0, 0, 0, 0.05);
+  transition: scrollbar-color 0.3s ease;
+}
+
+.liquidGlass-content.scrollbar-hidden {
+  scrollbar-color: transparent transparent;
 }
 
 .loading-container {

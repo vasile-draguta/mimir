@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
+  import { onDestroy } from 'svelte';
 
   interface Props {
     isOpen: boolean;
@@ -20,9 +21,50 @@
   }: Props = $props();
 
   let popoverElement = $state<HTMLDivElement | null>(null);
+  let contentElement = $state<HTMLDivElement | null>(null);
+  let isScrollbarVisible = $state(true);
+  let scrollTimeout: number | null = null;
+
+  const SCROLLBAR_HIDE_DELAY = 2000;
+
+  function handleScroll() {
+    isScrollbarVisible = true;
+
+    if (scrollTimeout !== null) {
+      clearTimeout(scrollTimeout);
+    }
+
+    scrollTimeout = window.setTimeout(() => {
+      isScrollbarVisible = false;
+    }, SCROLLBAR_HIDE_DELAY);
+  }
 
   $effect(() => {
     onElementBind?.(popoverElement);
+  });
+
+  $effect(() => {
+    if (contentElement) {
+      const element = contentElement;
+      element.addEventListener('scroll', handleScroll);
+
+      scrollTimeout = window.setTimeout(() => {
+        isScrollbarVisible = false;
+      }, SCROLLBAR_HIDE_DELAY);
+
+      return () => {
+        element.removeEventListener('scroll', handleScroll);
+        if (scrollTimeout !== null) {
+          clearTimeout(scrollTimeout);
+        }
+      };
+    }
+  });
+
+  onDestroy(() => {
+    if (scrollTimeout !== null) {
+      clearTimeout(scrollTimeout);
+    }
   });
 </script>
 
@@ -52,7 +94,11 @@
     <div class="liquidGlass-tint"></div>
     <div class="liquidGlass-shine"></div>
 
-    <div class="liquidGlass-content">
+    <div
+      bind:this={contentElement}
+      class="liquidGlass-content"
+      class:scrollbar-hidden={!isScrollbarVisible}
+    >
       {#if isLoading}
         <div class="loading-container">
           <div class="spinner" role="status" aria-label="Loading">
