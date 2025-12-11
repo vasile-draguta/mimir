@@ -1,50 +1,43 @@
-import { createGroq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
-import { SYSTEM_PROMPT } from './system-prompt';
-
 export interface SelectionContext {
   selected: string;
   before?: string;
   after?: string;
 }
 
-function buildPrompt(context: SelectionContext): string {
-  let prompt =
-    'User task: Provide a contextual explanation for the highlighted text below.\n\n';
-
-  if (context.before) {
-    prompt += `[Preceding context]: ...${context.before}\n\n`;
-  }
-
-  prompt += `[Selected text]: ${context.selected}`;
-
-  if (context.after) {
-    prompt += `\n\n[Following context]: ${context.after}...`;
-  }
-
-  return prompt;
+interface ContextResponse {
+  context: string;
 }
 
-export async function generateContext(context: SelectionContext) {
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+interface ErrorResponse {
+  error: string;
+}
 
-  if (!apiKey) {
+export async function generateContext(
+  context: SelectionContext
+): Promise<string> {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiKey = import.meta.env.VITE_API_KEY;
+
+  if (!apiUrl || !apiKey) {
     throw new Error(
-      'GROQ_API_KEY is not configured. Please set VITE_GROQ_API_KEY in your .env file.'
+      'API configuration missing. Please set VITE_API_URL and VITE_API_KEY in your .env file.'
     );
   }
 
-  const groq = createGroq({
-    apiKey: apiKey,
+  const response = await fetch(`${apiUrl}/api/context`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    },
+    body: JSON.stringify(context),
   });
 
-  const prompt = buildPrompt(context);
+  if (!response.ok) {
+    const error: ErrorResponse = await response.json();
+    throw new Error(error.error || 'Failed to generate context');
+  }
 
-  const response = await generateText({
-    model: groq('llama-3.1-8b-instant'),
-    system: SYSTEM_PROMPT,
-    prompt,
-  });
-
-  return response.text;
+  const data: ContextResponse = await response.json();
+  return data.context;
 }

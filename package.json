@@ -8,9 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@ai-sdk/groq": "^2.0.28",
     "@tailwindcss/vite": "^4.1.16",
-    "ai": "^5.0.87",
     "svelte": "^5.36.12",
     "tailwindcss": "^4.1.16"
   },
