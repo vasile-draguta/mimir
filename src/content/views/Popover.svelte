@@ -89,8 +89,10 @@
     "
     role="dialog"
     aria-label="Context information"
+    tabindex="-1"
     onmousedown={(e) => e.stopPropagation()}
     onclick={(e) => e.stopPropagation()}
+    onkeydown={(e) => e.stopPropagation()}
   >
     <div class="liquidGlass-effect"></div>
     <div class="liquidGlass-tint"></div>

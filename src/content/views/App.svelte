@@ -50,8 +50,6 @@
         selectedText = selectionData.text;
         popoverPosition = { x: position.x, y: position.y };
         popoverPlacement = position.placement;
-        
-        // Start fetch BEFORE opening popover (request fires while popover renders)
         fetchContext(selectionData.context);
         
         popoverOpen = true;
