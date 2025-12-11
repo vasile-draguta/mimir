@@ -67,7 +67,11 @@
   function handleMouseDown(event: MouseEvent) {
     if (event.button !== 0) return;
 
-    if (popoverElement && !popoverElement.contains(event.target as Node)) {
+    if (popoverElement && popoverOpen && popoverElement.contains(event.target as Node)) {
+      return;
+    }
+
+    if (popoverElement && popoverOpen && !popoverElement.contains(event.target as Node)) {
       popoverOpen = false;
       return;
     }
