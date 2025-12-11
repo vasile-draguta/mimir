@@ -7,6 +7,7 @@ import contextRouter from './routes/context.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
@@ -16,13 +17,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || origin.startsWith('chrome-extension://')) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: true,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'x-api-key'],
   })
