@@ -102,6 +102,20 @@
   line-height: 1.6;
   max-height: 400px;
   overflow-y: auto;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 4%,
+    black 96%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 4%,
+    black 96%,
+    transparent 100%
+  );
 }
 
 .liquidGlass-content::-webkit-scrollbar {
@@ -177,6 +191,8 @@
 
 .content-text {
   animation: fadeIn 0.3s ease-in;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .content-text p {
