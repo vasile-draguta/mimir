@@ -5,8 +5,6 @@
     { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
     { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B' },
     { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout' },
-    { id: 'gpt-oss-20b', name: 'GPT OSS 20B' },
-    { id: 'gpt-oss-120b', name: 'GPT OSS 120B' },
     { id: 'moonshotai/kimi-k2-instruct-0905', name: 'Kimi K2' },
   ] as const;
 

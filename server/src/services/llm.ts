@@ -13,6 +13,13 @@ if (!apiKey) {
 
 const groq = createGroq({ apiKey });
 
+const ALLOWED_MODELS = [
+  'llama-3.1-8b-instant',
+  'llama-3.3-70b-versatile',
+  'meta-llama/llama-4-scout-17b-16e-instruct',
+  'moonshotai/kimi-k2-instruct-0905',
+] as const;
+
 function buildPrompt(context: SelectionContext): string {
   let prompt =
     'User task: Provide a contextual explanation for the highlighted text below.\n\n';
@@ -37,6 +44,10 @@ export async function generateContext(
 ): Promise<string> {
   const prompt = buildPrompt(context);
   const modelId = context.model || DEFAULT_MODEL;
+
+  if (!ALLOWED_MODELS.includes(modelId as typeof ALLOWED_MODELS[number])) {
+    throw new Error(`Model "${modelId}" is not allowed. Allowed models: ${ALLOWED_MODELS.join(', ')}`);
+  }
 
   const response = await generateText({
     model: groq(modelId),
