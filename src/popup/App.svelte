@@ -10,6 +10,8 @@
 
   const DEFAULT_MODEL = 'llama-3.1-8b-instant';
 
+  const logoUrl = chrome.runtime.getURL('public/logo.png');
+
   let enabled = $state(true);
   let selectedModel = $state(DEFAULT_MODEL);
   let isLoaded = $state(false);
@@ -38,23 +40,36 @@
 
 <div class="flex flex-col gap-4 p-4 min-w-[320px]">
   <header class="border-b border-gray-200 dark:border-gray-700 pb-3 mb-2">
-    <h1 class="text-xl font-semibold m-0">Mimir</h1>
+    <div class="flex items-center justify-center gap-3">
+      <img
+        src={logoUrl}
+        alt="Mimir logo"
+        class="w-8 h-8 rounded-md object-contain shrink-0"
+      />
+      <h1 class="text-xl font-semibold m-0">Mimir</h1>
+    </div>
   </header>
 
   <div class="flex items-center justify-between gap-4 py-2">
     <label class="flex flex-col gap-0.5" for="enabled-toggle">
       <span class="font-medium text-sm">Extension Enabled</span>
-      <span class="text-xs text-gray-500 dark:text-gray-400">Enable or disable the extension</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400"
+        >Enable or disable the extension</span
+      >
     </label>
     <button
       id="enabled-toggle"
-      class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors duration-200 ease-in-out border-0 p-0 {enabled ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}"
+      class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors duration-200 ease-in-out border-0 p-0 {enabled
+        ? 'bg-blue-500'
+        : 'bg-gray-300 dark:bg-gray-600'}"
       onclick={handleToggle}
       aria-pressed={enabled}
       aria-label={enabled ? 'Disable extension' : 'Enable extension'}
     >
-      <span 
-        class="inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out {enabled ? 'translate-x-[22px]' : 'translate-x-[2px]'}"
+      <span
+        class="inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out {enabled
+          ? 'translate-x-[22px]'
+          : 'translate-x-[2px]'}"
       ></span>
     </button>
   </div>
@@ -62,7 +77,9 @@
   <div class="flex items-center justify-between gap-4 py-2">
     <label class="flex flex-col gap-0.5" for="model-select">
       <span class="font-medium text-sm">Model</span>
-      <span class="text-xs text-gray-500 dark:text-gray-400">Select the AI model to use</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400"
+        >Select the AI model to use</span
+      >
     </label>
     <select
       id="model-select"
