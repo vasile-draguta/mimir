@@ -2,6 +2,7 @@ export interface SelectionContext {
   selected: string;
   before?: string;
   after?: string;
+  model?: string;
 }
 
 interface ContextResponse {
@@ -11,6 +12,8 @@ interface ContextResponse {
 interface ErrorResponse {
   error: string;
 }
+
+const DEFAULT_MODEL = 'llama-3.1-8b-instant';
 
 export async function generateContext(
   context: SelectionContext
@@ -24,13 +27,16 @@ export async function generateContext(
     );
   }
 
+  const storage = await chrome.storage.local.get({ model: DEFAULT_MODEL });
+  const model = storage.model as string;
+
   const response = await fetch(`${apiUrl}/api/context`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
     },
-    body: JSON.stringify(context),
+    body: JSON.stringify({ ...context, model }),
   });
 
   if (!response.ok) {

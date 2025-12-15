@@ -14,6 +14,7 @@
 
   let enabled = $state(true);
   let selectedModel = $state(DEFAULT_MODEL);
+  let isLoaded = $state(false);
 
   onMount(async () => {
     const storage = await chrome.storage.local.get({
@@ -22,11 +23,12 @@
     });
     enabled = storage.enabled as boolean;
     selectedModel = storage.model as string;
+    isLoaded = true;
   });
 
-  async function handleToggle() {
+  function handleToggle() {
     enabled = !enabled;
-    await chrome.storage.local.set({ enabled });
+    chrome.storage.local.set({ enabled });
   }
 
   async function handleModelChange(event: Event) {

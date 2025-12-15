@@ -17,6 +17,7 @@
   let contextData = $state<string | null>(null);
   let isLoading = $state(false);
   let popoverElement = $state<HTMLDivElement | null>(null);
+  let extensionEnabled = $state(true);
 
   const { updateDarkMode } = useDarkMode(() => popoverElement);
 
@@ -28,6 +29,7 @@
   const MAX_SELECTION_LENGTH = 1000;
 
   function startHoldTimer() {
+    if (!extensionEnabled) return;
     clearHoldTimer();
 
     const text = getSelectionText();
@@ -98,6 +100,7 @@
   }
 
   function handleKeybind(event: KeyboardEvent) {
+    if (!extensionEnabled) return;
     if (
       event.key === 'k' &&
       event.metaKey &&
@@ -159,7 +162,16 @@
     popoverElement = element;
   }
 
-  onMount(() => {
+  onMount(async () => {
+    const storage = await chrome.storage.local.get({ enabled: true });
+    extensionEnabled = storage.enabled as boolean;
+
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.enabled) {
+        extensionEnabled = changes.enabled.newValue as boolean;
+      }
+    });
+
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('selectionchange', handleSelectionChange);
