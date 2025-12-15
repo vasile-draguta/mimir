@@ -30,13 +30,16 @@ function buildPrompt(context: SelectionContext): string {
   return prompt;
 }
 
+const DEFAULT_MODEL = 'llama-3.1-8b-instant';
+
 export async function generateContext(
   context: SelectionContext
 ): Promise<string> {
   const prompt = buildPrompt(context);
+  const modelId = context.model || DEFAULT_MODEL;
 
   const response = await generateText({
-    model: groq('llama-3.1-8b-instant'),
+    model: groq(modelId),
     system: SYSTEM_PROMPT,
     prompt,
   });

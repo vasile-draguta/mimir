@@ -37,5 +37,10 @@ export function validateContextRequest(
     return;
   }
 
+  if (body.model !== undefined && typeof body.model !== 'string') {
+    res.status(400).json({ error: 'Invalid "model" field' });
+    return;
+  }
+
   next();
 }
