@@ -5,45 +5,23 @@ export interface SelectionContext {
   model?: string;
 }
 
-interface ContextResponse {
-  context: string;
+interface BackgroundResponse {
+  success: boolean;
+  data?: string;
+  error?: string;
 }
-
-interface ErrorResponse {
-  error: string;
-}
-
-const DEFAULT_MODEL = 'llama-3.1-8b-instant';
 
 export async function generateContext(
   context: SelectionContext
 ): Promise<string> {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const apiKey = import.meta.env.VITE_API_KEY;
-
-  if (!apiUrl || !apiKey) {
-    throw new Error(
-      'API configuration missing. Please set VITE_API_URL and VITE_API_KEY in your .env file.'
-    );
-  }
-
-  const storage = await chrome.storage.local.get({ model: DEFAULT_MODEL });
-  const model = storage.model as string;
-
-  const response = await fetch(`${apiUrl}/api/context`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-    },
-    body: JSON.stringify({ ...context, model }),
+  const response: BackgroundResponse = await chrome.runtime.sendMessage({
+    type: 'GENERATE_CONTEXT',
+    payload: context,
   });
 
-  if (!response.ok) {
-    const error: ErrorResponse = await response.json();
-    throw new Error(error.error || 'Failed to generate context');
+  if (!response.success) {
+    throw new Error(response.error || 'Failed to generate context');
   }
 
-  const data: ContextResponse = await response.json();
-  return data.context;
+  return response.data!;
 }
