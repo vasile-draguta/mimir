@@ -1,8 +1,11 @@
+import { addEntry, cleanupExpired } from '../lib/historyStorage';
+
 export interface SelectionContext {
   selected: string;
   before?: string;
   after?: string;
   model?: string;
+  sourceUrl?: string;
 }
 
 interface ContextResponse {
@@ -23,6 +26,12 @@ type Message = GenerateContextMessage;
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 const DEFAULT_MODEL = 'llama-3.1-8b-instant';
+
+cleanupExpired().then((count) => {
+  if (count > 0) {
+    console.log(`[Mimir] Cleaned up ${count} expired history entries`);
+  }
+});
 
 chrome.runtime.onMessage.addListener(
   (message: Message, _sender, sendResponse) => {
@@ -65,5 +74,13 @@ async function handleGenerateContext(
   }
 
   const data: ContextResponse = await response.json();
+
+  await addEntry({
+    selectedText: context.selected,
+    contextResponse: data.context,
+    sourceUrl: context.sourceUrl || 'Unknown',
+    model,
+  });
+
   return data.context;
 }

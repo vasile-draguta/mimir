@@ -3,6 +3,7 @@ export interface SelectionContext {
   before?: string;
   after?: string;
   model?: string;
+  sourceUrl?: string;
 }
 
 interface BackgroundResponse {
@@ -16,7 +17,10 @@ export async function generateContext(
 ): Promise<string> {
   const response: BackgroundResponse = await chrome.runtime.sendMessage({
     type: 'GENERATE_CONTEXT',
-    payload: context,
+    payload: {
+      ...context,
+      sourceUrl: window.location.href,
+    },
   });
 
   if (!response.success) {
