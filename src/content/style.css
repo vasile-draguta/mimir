@@ -49,7 +49,6 @@
   --glass-highlight: rgba(255, 255, 255, 0.45);
 }
 
-/* LIQUID GLASS STYLES */
 .liquidGlass-wrapper {
   --border-radius: 2rem;
   --glass-padding: 1.875rem;

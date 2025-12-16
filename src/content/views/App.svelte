@@ -53,7 +53,7 @@
         popoverPosition = { x: position.x, y: position.y };
         popoverPlacement = position.placement;
         fetchContext(selectionData.context);
-        
+
         popoverOpen = true;
         updateDarkMode();
       }
@@ -70,11 +70,19 @@
   function handleMouseDown(event: MouseEvent) {
     if (event.button !== 0) return;
 
-    if (popoverElement && popoverOpen && popoverElement.contains(event.target as Node)) {
+    if (
+      popoverElement &&
+      popoverOpen &&
+      popoverElement.contains(event.target as Node)
+    ) {
       return;
     }
 
-    if (popoverElement && popoverOpen && !popoverElement.contains(event.target as Node)) {
+    if (
+      popoverElement &&
+      popoverOpen &&
+      !popoverElement.contains(event.target as Node)
+    ) {
       popoverOpen = false;
       return;
     }
@@ -124,9 +132,9 @@
       selectedText = selectionData.text;
       popoverPosition = { x: position.x, y: position.y };
       popoverPlacement = position.placement;
-      
+
       fetchContext(selectionData.context);
-      
+
       popoverOpen = true;
       updateDarkMode();
     }
