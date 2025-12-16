@@ -2,10 +2,30 @@
   import { onMount } from 'svelte';
 
   const MODELS = [
-    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant' },
-    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B' },
-    { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout' },
-    { id: 'moonshotai/kimi-k2-instruct-0905', name: 'Kimi K2' },
+    {
+      id: 'llama-3.1-8b-instant',
+      name: 'Llama 3.1 8B Instant',
+      category: 'fast',
+    },
+    { id: 'groq/compound-mini', name: 'Compound Mini', category: 'fast' },
+    { id: 'groq/compound', name: 'Compound', category: 'balanced' },
+    { id: 'qwen/qwen3-32b', name: 'Qwen 3 32B', category: 'balanced' },
+    {
+      id: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      name: 'Llama 4 Scout',
+      category: 'balanced',
+    },
+    {
+      id: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+      name: 'Llama 4 Maverick',
+      category: 'balanced',
+    },
+    {
+      id: 'llama-3.3-70b-versatile',
+      name: 'Llama 3.3 70B',
+      category: 'powerful',
+    },
+    { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', category: 'powerful' },
   ] as const;
 
   const DEFAULT_MODEL = 'llama-3.1-8b-instant';
@@ -83,13 +103,25 @@
     </label>
     <select
       id="model-select"
-      class="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2a2a] cursor-pointer min-w-[140px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      class="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2a2a] cursor-pointer min-w-[160px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       value={selectedModel}
       onchange={handleModelChange}
     >
-      {#each MODELS as model}
-        <option value={model.id}>{model.name}</option>
-      {/each}
+      <optgroup label="⚡ Fast">
+        {#each MODELS.filter((m) => m.category === 'fast') as model}
+          <option value={model.id}>{model.name}</option>
+        {/each}
+      </optgroup>
+      <optgroup label="⚖️ Balanced">
+        {#each MODELS.filter((m) => m.category === 'balanced') as model}
+          <option value={model.id}>{model.name}</option>
+        {/each}
+      </optgroup>
+      <optgroup label="🧠 Powerful">
+        {#each MODELS.filter((m) => m.category === 'powerful') as model}
+          <option value={model.id}>{model.name}</option>
+        {/each}
+      </optgroup>
     </select>
   </div>
 </div>

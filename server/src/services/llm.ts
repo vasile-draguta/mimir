@@ -15,9 +15,13 @@ const groq = createGroq({ apiKey });
 
 const ALLOWED_MODELS = [
   'llama-3.1-8b-instant',
-  'llama-3.3-70b-versatile',
+  'groq/compound-mini',
+  'groq/compound',
+  'qwen/qwen3-32b',
   'meta-llama/llama-4-scout-17b-16e-instruct',
-  'moonshotai/kimi-k2-instruct-0905',
+  'meta-llama/llama-4-maverick-17b-128e-instruct',
+  'llama-3.3-70b-versatile',
+  'openai/gpt-oss-120b',
 ] as const;
 
 function buildPrompt(context: SelectionContext): string {
@@ -45,8 +49,12 @@ export async function generateContext(
   const prompt = buildPrompt(context);
   const modelId = context.model || DEFAULT_MODEL;
 
-  if (!ALLOWED_MODELS.includes(modelId as typeof ALLOWED_MODELS[number])) {
-    throw new Error(`Model "${modelId}" is not allowed. Allowed models: ${ALLOWED_MODELS.join(', ')}`);
+  if (!ALLOWED_MODELS.includes(modelId as (typeof ALLOWED_MODELS)[number])) {
+    throw new Error(
+      `Model "${modelId}" is not allowed. Allowed models: ${ALLOWED_MODELS.join(
+        ', '
+      )}`
+    );
   }
 
   const response = await generateText({
