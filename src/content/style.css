@@ -49,57 +49,60 @@
   --glass-highlight: rgba(255, 255, 255, 0.45);
 }
 
-.liquidGlass-wrapper {
+.mimir-popover.liquidGlass-wrapper {
   --border-radius: 2rem;
   --glass-padding: 1.875rem;
 
-  position: relative;
-  display: flex;
-  overflow: hidden;
-  border-radius: var(--border-radius);
-  padding: var(--glass-padding);
-  max-height: calc(100vh - 32px);
-  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative !important;
+  display: flex !important;
+  overflow: hidden !important;
+  border-radius: var(--border-radius) !important;
+  padding: var(--glass-padding) !important;
+  max-height: calc(100vh - 32px) !important;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  isolation: isolate;
 }
 
-.liquidGlass-effect {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  overflow: hidden;
+.mimir-popover .liquidGlass-effect {
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 0 !important;
+  --glass-backdrop: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-backdrop) !important;
+  backdrop-filter: var(--glass-backdrop) !important;
+  overflow: hidden !important;
+  content: '';
 }
 
-.liquidGlass-tint {
-  z-index: 1;
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.7);
+.mimir-popover .liquidGlass-tint {
+  z-index: 1 !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(255, 255, 255, 0.7) !important;
 }
 
-.liquidGlass-shine {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  overflow: hidden;
+.mimir-popover .liquidGlass-shine {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  overflow: hidden !important;
   box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5),
-    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5) !important;
 }
 
-.liquidGlass-content {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-  padding-right: 12px;
-  color: var(--foreground);
+.mimir-popover .liquidGlass-content {
+  position: relative !important;
+  z-index: 3 !important;
+  width: 100% !important;
+  padding-right: 12px !important;
+  color: var(--foreground) !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  max-height: 400px;
-  overflow-y: auto;
+    sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -116,105 +119,107 @@
   );
 }
 
-.liquidGlass-content::-webkit-scrollbar {
+.mimir-popover .liquidGlass-content::-webkit-scrollbar {
   width: 8px;
   transition: opacity 0.3s ease;
 }
 
-.liquidGlass-content::-webkit-scrollbar-track {
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   transition: opacity 0.3s ease;
 }
 
-.liquidGlass-content::-webkit-scrollbar-thumb {
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   transition: background 0.2s, opacity 0.3s ease;
 }
 
-.liquidGlass-content::-webkit-scrollbar-thumb:hover {
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.35);
 }
 
-.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar {
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar {
   opacity: 0;
 }
 
-.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-track {
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-track {
   opacity: 0;
 }
 
-.liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-thumb {
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-thumb {
   opacity: 0;
 }
 
-.liquidGlass-content {
+.mimir-popover .liquidGlass-content {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
   transition: scrollbar-color 0.3s ease;
 }
 
-.liquidGlass-content.scrollbar-hidden {
+.mimir-popover .liquidGlass-content.scrollbar-hidden {
   scrollbar-color: transparent transparent;
 }
 
-.loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 0;
+.mimir-popover .loading-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem 0 !important;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--foreground);
-  border-top-color: transparent;
-  border-radius: 50%;
+.mimir-popover .spinner {
+  animation: mimir-spin 1s linear infinite !important;
+  width: 24px !important;
+  height: 24px !important;
+  border: 3px solid var(--foreground) !important;
+  border-top-color: transparent !important;
+  border-radius: 50% !important;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+.mimir-popover .sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
 }
 
-.content-text {
-  animation: fadeIn 0.3s ease-in;
-  padding-top: 16px;
-  padding-bottom: 16px;
+.mimir-popover .content-text {
+  animation: mimir-fadeIn 0.3s ease-in;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
 }
 
-.content-text p {
-  color: var(--foreground);
-  white-space: pre-wrap;
-  font-size: 14px;
-  line-height: 1.7;
+.mimir-popover .content-text p {
+  color: var(--foreground) !important;
+  white-space: pre-wrap !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
-    'Liberation Mono', monospace;
-  word-break: normal;
-  overflow-wrap: break-word;
-  hyphens: none;
-  -webkit-hyphens: none;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+    'Liberation Mono', monospace !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.loading-text {
-  color: var(--muted-foreground);
-  text-align: center;
-  padding: 1rem 0;
+.mimir-popover .loading-text {
+  color: var(--muted-foreground) !important;
+  text-align: center !important;
+  padding: 1rem 0 !important;
 }
 
-@keyframes spin {
+@keyframes mimir-spin {
   from {
     transform: rotate(0deg);
   }
@@ -223,7 +228,7 @@
   }
 }
 
-@keyframes fadeIn {
+@keyframes mimir-fadeIn {
   from {
     opacity: 0;
     transform: translateY(4px);
@@ -234,29 +239,30 @@
   }
 }
 
-.dark .liquidGlass-tint {
-  background: rgba(23, 23, 23, 0.6);
+.mimir-popover.dark .liquidGlass-tint {
+  background: rgba(23, 23, 23, 0.6) !important;
 }
 
-.dark .liquidGlass-effect {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+.mimir-popover.dark .liquidGlass-effect {
+  --glass-backdrop: blur(10px);
+  -webkit-backdrop-filter: var(--glass-backdrop) !important;
+  backdrop-filter: var(--glass-backdrop) !important;
 }
 
-.dark .liquidGlass-shine {
+.mimir-popover.dark .liquidGlass-shine {
   box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.2),
-    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.2);
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.2) !important;
 }
 
-.dark .liquidGlass-content::-webkit-scrollbar-thumb {
+.mimir-popover.dark .liquidGlass-content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.dark .liquidGlass-content::-webkit-scrollbar-thumb:hover {
+.mimir-popover.dark .liquidGlass-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.dark .liquidGlass-content {
+.mimir-popover.dark .liquidGlass-content {
   scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
 }
 
