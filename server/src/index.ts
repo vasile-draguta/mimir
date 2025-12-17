@@ -17,7 +17,17 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        origin.startsWith('chrome-extension://') ||
+        origin === 'http://localhost:3000'
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'x-api-key'],
   })

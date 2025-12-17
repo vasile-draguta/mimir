@@ -27,7 +27,7 @@ export default defineManifest({
     },
   ],
   permissions: ['sidePanel', 'contentSettings', 'storage'],
-  host_permissions: ['http://localhost:3000/*'],
+  host_permissions: ['https://mimir-wine.vercel.app/*'],
   side_panel: {
     default_path: 'src/sidepanel/index.html',
   },
