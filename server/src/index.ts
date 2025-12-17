@@ -7,6 +7,7 @@ import contextRouter from './routes/context.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production' ? true : false;
 
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
@@ -29,7 +30,11 @@ app.get('/health', (_req, res) => {
 });
 app.use('/api/context', rateLimiter, authMiddleware, contextRouter);
 
-app.listen(PORT, () => {
-  console.log(`[Server] Mimir API running on http://localhost:${PORT}`);
-  console.log(`[Server] Health check: http://localhost:${PORT}/health`);
-});
+if (!isProduction) {
+  app.listen(PORT, () => {
+    console.log(`[Server] Mimir API running on http://localhost:${PORT}`);
+    console.log(`[Server] Health check: http://localhost:${PORT}/health`);
+  });
+}
+
+export default app;
