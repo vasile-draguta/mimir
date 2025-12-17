@@ -6,6 +6,16 @@ A Chrome extension that provides instant context for any text you highlight so y
 
 <video src="https://github.com/user-attachments/assets/89595b4f-c71c-4b51-a7c8-108e140017a3" width="320" height="240" controls></video>
 
+## 🚀 Quick Start
+
+**v1.0.0 is now available!** The backend server is hosted, so you can use the extension right away:
+
+1. Download `crx-Mimir-1.0.0.zip` from the [latest release](https://github.com/vasile-draguta/mimir/releases/latest)
+2. Open Chrome and go to `chrome://extensions`
+3. Enable "Developer mode"
+4. Drag and drop the zip file onto the page
+5. Start highlighting text and hold down the click on the highlighted text!
+
 ## ✨ Features
 
 - **Instant Context** - Highlight any text on a webpage and get AI-powered context instantly
