@@ -109,12 +109,17 @@
 
   function handleKeybind(event: KeyboardEvent) {
     if (!extensionEnabled) return;
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const modifierPressed = isMac ? event.metaKey : event.ctrlKey;
+
     if (
       event.key === 'k' &&
-      event.metaKey &&
+      modifierPressed &&
       !event.shiftKey &&
       !event.altKey &&
-      !event.ctrlKey
+      !(isMac && event.ctrlKey) &&
+      !(!isMac && event.metaKey)
     ) {
       event.preventDefault();
 
@@ -160,7 +165,9 @@
       contextData = context;
     } catch (error) {
       console.error('[Mimir] Fetch error:', error);
-      contextData = 'Failed to fetch context';
+      const errorMessage =
+        (error as Error).message || 'Failed to fetch context';
+      contextData = errorMessage;
     } finally {
       isLoading = false;
     }

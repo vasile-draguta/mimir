@@ -15,17 +15,30 @@ interface BackgroundResponse {
 export async function generateContext(
   context: SelectionContext
 ): Promise<string> {
-  const response: BackgroundResponse = await chrome.runtime.sendMessage({
-    type: 'GENERATE_CONTEXT',
-    payload: {
-      ...context,
-      sourceUrl: window.location.href,
-    },
-  });
+  try {
+    const response: BackgroundResponse = await chrome.runtime.sendMessage({
+      type: 'GENERATE_CONTEXT',
+      payload: {
+        ...context,
+        sourceUrl: window.location.href,
+      },
+    });
 
-  if (!response.success) {
-    throw new Error(response.error || 'Failed to generate context');
+    if (!response.success) {
+      throw new Error(response.error || 'Failed to generate context');
+    }
+
+    return response.data!;
+  } catch (error) {
+    const errorMessage = (error as Error).message || '';
+
+    if (
+      errorMessage.includes('Extension context invalidated') ||
+      errorMessage.includes('message port closed')
+    ) {
+      throw new Error('Extension was updated. Please refresh the page.');
+    }
+
+    throw error;
   }
-
-  return response.data!;
 }

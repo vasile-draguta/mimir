@@ -2,6 +2,18 @@ import { mount } from 'svelte';
 import App from './views/App.svelte';
 import styleContent from './style.css?inline';
 
+const svgFilter = `
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+  <defs>
+    <filter id="mimir-glass-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="glow" />
+      <feComposite in="SourceGraphic" in2="glow" operator="atop" />
+    </filter>
+  </defs>
+</svg>
+`;
+
 function mountApp() {
   if (!document.body || document.getElementById('mimir-app')) return;
 
@@ -35,6 +47,11 @@ function mountApp() {
   const style = document.createElement('style');
   style.textContent = styleContent;
   shadowRoot.appendChild(style);
+
+  // Add SVG filter for liquid glass effect
+  const svgContainer = document.createElement('div');
+  svgContainer.innerHTML = svgFilter;
+  shadowRoot.appendChild(svgContainer);
 
   shadowRoot.appendChild(shadowContainer);
 
