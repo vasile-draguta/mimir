@@ -7,7 +7,6 @@ import contextRouter from './routes/context.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
