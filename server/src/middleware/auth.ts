@@ -1,7 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 
-const ALLOWED_ORIGIN = 'chrome-extension://lfoegjnbfagbmgjejbhdioboalmdfmok';
-
 export function authMiddleware(
   req: Request,
   res: Response,
@@ -11,7 +9,7 @@ export function authMiddleware(
   const validKey = process.env.MIMIR_CLIENT_KEY;
 
   const origin = req.headers.origin;
-  if (origin && origin !== ALLOWED_ORIGIN) {
+  if (origin && !origin.startsWith('chrome-extension://')) {
     console.warn(`[Auth] Blocked request from unauthorized origin: ${origin}`);
     res.status(403).json({ error: 'Forbidden Origin' });
     return;

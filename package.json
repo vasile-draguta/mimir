@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "release": "bun run build && gh release create v$npm_package_version ./release/crx-$npm_package_name-$npm_package_version.zip --title \"$npm_package_name v$npm_package_version\" --notes \"Release $npm_package_name v$npm_package_version\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
