@@ -3,7 +3,7 @@ import App from './views/App.svelte';
 import styleContent from './style.css?inline';
 
 const svgFilter = `
-<svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+<svg xmlns="http://www.w3.org/2000/svg" style="position: absolute; width: 0; height: 0; overflow: hidden;">
   <defs>
     <filter id="mimir-glass-blur" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
@@ -48,8 +48,9 @@ function mountApp() {
   style.textContent = styleContent;
   shadowRoot.appendChild(style);
 
-  // Add SVG filter for liquid glass effect
   const svgContainer = document.createElement('div');
+  svgContainer.style.cssText =
+    'position: absolute; width: 0; height: 0; pointer-events: none;';
   svgContainer.innerHTML = svgFilter;
   shadowRoot.appendChild(svgContainer);
 
