@@ -1,61 +1,58 @@
 .mimir-extension {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --glass-blur: rgba(255, 255, 255, 0.15);
-  --glass-highlight: rgba(255, 255, 255, 0.45);
-
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--foreground);
   background: transparent;
-}
-
-.mimir-extension.dark {
-  --background: #171717;
-  --foreground: oklch(0.985 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --ring: oklch(0.556 0 0);
-  --glass-blur: rgba(23, 23, 23, 0.3);
-  --glass-highlight: rgba(255, 255, 255, 0.15);
 }
 
 .mimir-extension * {
   box-sizing: border-box;
 }
 
-.mimir-popover.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --glass-blur: rgba(23, 23, 23, 0.3);
-  --glass-highlight: rgba(255, 255, 255, 0.15);
-}
-
 .mimir-popover {
-  --background: oklch(1 0 0);
   --foreground: oklch(0.1 0 0);
   --muted-foreground: oklch(0.4 0 0);
-  --border: oklch(0.922 0 0);
-  --glass-blur: rgba(255, 255, 255, 0.15);
-  --glass-highlight: rgba(255, 255, 255, 0.45);
+  --spinner-color: #171717;
+  --glass-tint: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.35) 100%
+  );
+  --glass-shine: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  --glass-shine-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6),
+    inset -1px -1px 2px 1px rgba(255, 255, 255, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+}
+
+.mimir-popover.dark {
+  --foreground: oklch(0.985 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --spinner-color: #e5e5e5;
+  --glass-tint: rgba(23, 23, 23, 0.6);
+  --glass-shine: none;
+  --glass-shine-shadow: none;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
+  --scrollbar-track: rgba(255, 255, 255, 0.05);
 }
 
 .mimir-popover.liquidGlass-wrapper {
-  --border-radius: 2rem;
-  --glass-padding: 1.875rem;
-
   position: relative !important;
   display: flex !important;
   overflow: hidden !important;
-  border-radius: var(--border-radius) !important;
-  padding: var(--glass-padding) !important;
+  border-radius: 2rem !important;
+  padding: 1.875rem !important;
   max-height: calc(100vh - 32px) !important;
   box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
@@ -66,54 +63,44 @@
   position: absolute !important;
   z-index: 0 !important;
   inset: 0 !important;
-  --glass-backdrop: blur(12px) saturate(200%);
-  -webkit-backdrop-filter: var(--glass-backdrop) !important;
-  backdrop-filter: var(--glass-backdrop) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(200%) !important;
+  backdrop-filter: blur(12px) saturate(200%) !important;
   overflow: hidden !important;
-  content: '';
+}
+
+.mimir-popover.dark .liquidGlass-effect {
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 .mimir-popover .liquidGlass-tint {
-  z-index: 1 !important;
   position: absolute !important;
+  z-index: 1 !important;
   inset: 0 !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(255, 255, 255, 0.35) 100%
-  ) !important;
+  background: var(--glass-tint) !important;
 }
 
 .mimir-popover .liquidGlass-shine {
   position: absolute !important;
-  inset: 0 !important;
   z-index: 2 !important;
+  inset: 0 !important;
   overflow: hidden !important;
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    transparent 40%,
-    transparent 60%,
-    rgba(255, 255, 255, 0.15) 100%
-  ) !important;
-  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6),
-    inset -1px -1px 2px 1px rgba(255, 255, 255, 0.4),
-    inset 0 0 20px rgba(255, 255, 255, 0.1) !important;
+  background: var(--glass-shine) !important;
+  box-shadow: var(--glass-shine-shadow) !important;
 }
 
 .mimir-popover .liquidGlass-content {
   position: relative !important;
   z-index: 3 !important;
   width: 100% !important;
+  max-height: 400px !important;
   padding-right: 12px !important;
+  overflow-y: auto !important;
   color: var(--foreground) !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif !important;
   font-size: 14px !important;
   line-height: 1.6 !important;
-  max-height: 400px !important;
-  overflow-y: auto !important;
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -128,44 +115,8 @@
     black 96%,
     transparent 100%
   );
-}
-
-.mimir-popover .liquidGlass-content::-webkit-scrollbar {
-  width: 8px;
-  transition: opacity 0.3s ease;
-}
-
-.mimir-popover .liquidGlass-content::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  transition: opacity 0.3s ease;
-}
-
-.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  transition: background 0.2s, opacity 0.3s ease;
-}
-
-.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar {
-  opacity: 0;
-}
-
-.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-track {
-  opacity: 0;
-}
-
-.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-thumb {
-  opacity: 0;
-}
-
-.mimir-popover .liquidGlass-content {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   transition: scrollbar-color 0.3s ease;
 }
 
@@ -173,40 +124,73 @@
   scrollbar-color: transparent transparent;
 }
 
+.mimir-popover .liquidGlass-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.mimir-popover .liquidGlass-content::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar,
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-track,
+.mimir-popover .liquidGlass-content.scrollbar-hidden::-webkit-scrollbar-thumb {
+  opacity: 0;
+}
+
+.mimir-popover .content-text {
+  padding: 16px 0 !important;
+  animation: mimir-fadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.mimir-popover .content-text p {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--foreground) !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.7 !important;
+  letter-spacing: -0.01em !important;
+  white-space: pre-wrap !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+}
+
 .mimir-popover .loading-container {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 2rem 0 !important;
-  color: #171717 !important;
   position: relative !important;
   z-index: 3 !important;
   width: 100% !important;
+  padding: 2rem 0 !important;
 }
 
-.mimir-popover.dark .loading-container {
-  color: #e5e5e5 !important;
-}
-
-.mimir-popover .loading-container .spinner {
+.mimir-popover .spinner {
   width: 28px !important;
   height: 28px !important;
   display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
   border: 3px solid transparent !important;
-  border-top-color: #171717 !important;
-  border-right-color: #171717 !important;
+  border-top-color: var(--spinner-color) !important;
+  border-right-color: var(--spinner-color) !important;
   border-radius: 50% !important;
-  -webkit-animation: mimir-spin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-  animation: mimir-spin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
   box-sizing: border-box !important;
-}
-
-.mimir-popover.dark .loading-container .spinner {
-  border-color: transparent !important;
-  border-top-color: #e5e5e5 !important;
-  border-right-color: #e5e5e5 !important;
+  animation: mimir-spin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
 }
 
 .mimir-popover .sr-only {
@@ -221,53 +205,11 @@
   border-width: 0 !important;
 }
 
-.mimir-popover .content-text {
-  animation: mimir-fadeIn 0.3s ease-in;
-  padding-top: 16px !important;
-  padding-bottom: 16px !important;
-}
-
-.mimir-popover .content-text p {
-  color: var(--foreground) !important;
-  white-space: pre-wrap !important;
-  font-size: 14px !important;
-  line-height: 1.7 !important;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
-    'Liberation Mono', monospace !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
-  hyphens: none !important;
-  -webkit-hyphens: none !important;
-  font-weight: 500 !important;
-  letter-spacing: -0.01em !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.mimir-popover .loading-text {
-  color: var(--muted-foreground) !important;
-  text-align: center !important;
-  padding: 1rem 0 !important;
-}
-
-@-webkit-keyframes mimir-spin {
-  from {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes mimir-spin {
   from {
-    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
   to {
-    -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
@@ -281,31 +223,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.mimir-popover.dark .liquidGlass-tint {
-  background: rgba(23, 23, 23, 0.6) !important;
-}
-
-.mimir-popover.dark .liquidGlass-effect {
-  --glass-backdrop: blur(10px);
-  -webkit-backdrop-filter: var(--glass-backdrop) !important;
-  backdrop-filter: var(--glass-backdrop) !important;
-}
-
-.mimir-popover.dark .liquidGlass-shine {
-  background: none !important;
-  box-shadow: none !important;
-}
-
-.mimir-popover.dark .liquidGlass-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.mimir-popover.dark .liquidGlass-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.mimir-popover.dark .liquidGlass-content {
-  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
 }

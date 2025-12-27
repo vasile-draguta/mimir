@@ -29,14 +29,17 @@
 
   function handleScroll() {
     isScrollbarVisible = true;
-
-    if (scrollTimeout !== null) {
-      clearTimeout(scrollTimeout);
-    }
-
+    clearScrollTimeout();
     scrollTimeout = window.setTimeout(() => {
       isScrollbarVisible = false;
     }, SCROLLBAR_HIDE_DELAY);
+  }
+
+  function clearScrollTimeout() {
+    if (scrollTimeout !== null) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = null;
+    }
   }
 
   $effect(() => {
@@ -44,28 +47,22 @@
   });
 
   $effect(() => {
-    if (contentElement) {
-      const element = contentElement;
-      element.addEventListener('scroll', handleScroll);
+    if (!contentElement) return;
 
-      scrollTimeout = window.setTimeout(() => {
-        isScrollbarVisible = false;
-      }, SCROLLBAR_HIDE_DELAY);
+    const element = contentElement;
+    element.addEventListener('scroll', handleScroll);
 
-      return () => {
-        element.removeEventListener('scroll', handleScroll);
-        if (scrollTimeout !== null) {
-          clearTimeout(scrollTimeout);
-        }
-      };
-    }
+    scrollTimeout = window.setTimeout(() => {
+      isScrollbarVisible = false;
+    }, SCROLLBAR_HIDE_DELAY);
+
+    return () => {
+      element.removeEventListener('scroll', handleScroll);
+      clearScrollTimeout();
+    };
   });
 
-  onDestroy(() => {
-    if (scrollTimeout !== null) {
-      clearTimeout(scrollTimeout);
-    }
-  });
+  onDestroy(clearScrollTimeout);
 </script>
 
 {#if isOpen}
@@ -77,16 +74,14 @@
       opacity: 0,
     }}
     class="mimir-popover liquidGlass-wrapper"
-    style="
-      position: absolute;
-      left: {position.x}px;
-      top: {position.y}px;
-      transform: translate(-50%, {placement === 'top' ? '-100%' : '0%'});
-      z-index: 999999;
-      pointer-events: auto;
-      width: 448px;
-      max-width: calc(100vw - 32px);
-    "
+    style:position="absolute"
+    style:left="{position.x}px"
+    style:top="{position.y}px"
+    style:transform="translate(-50%, {placement === 'top' ? '-100%' : '0%'})"
+    style:z-index="999999"
+    style:pointer-events="auto"
+    style:width="448px"
+    style:max-width="calc(100vw - 32px)"
     role="dialog"
     aria-label="Context information"
     tabindex="-1"
@@ -104,19 +99,15 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-    {:else}
+    {:else if contextData}
       <div
         bind:this={contentElement}
         class="liquidGlass-content"
         class:scrollbar-hidden={!isScrollbarVisible}
       >
-        {#if contextData}
-          <div class="content-text">
-            <p>{contextData}</p>
-          </div>
-        {:else}
-          <p class="loading-text">Loading...</p>
-        {/if}
+        <div class="content-text">
+          <p>{contextData}</p>
+        </div>
       </div>
     {/if}
   </div>
