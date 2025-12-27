@@ -98,52 +98,26 @@
     <div class="liquidGlass-tint"></div>
     <div class="liquidGlass-shine"></div>
 
-    <div
-      bind:this={contentElement}
-      class="liquidGlass-content"
-      class:scrollbar-hidden={!isScrollbarVisible}
-    >
-      {#if isLoading}
-        <div class="loading-container">
-          <svg
-            role="status"
-            aria-label="Loading"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            style="animation: mimir-spin 1s linear infinite;"
-          >
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-dasharray="31.4 31.4"
-              style="opacity: 0.25;"
-            />
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-dasharray="31.4 31.4"
-              stroke-dashoffset="31.4"
-            />
-            <title>Loading...</title>
-          </svg>
+    {#if isLoading}
+      <div class="loading-container">
+        <div class="spinner" role="status" aria-label="Loading">
+          <span class="sr-only">Loading...</span>
         </div>
-      {:else if contextData}
-        <div class="content-text">
-          <p>{contextData}</p>
-        </div>
-      {:else}
-        <p class="loading-text">Loading...</p>
-      {/if}
-    </div>
+      </div>
+    {:else}
+      <div
+        bind:this={contentElement}
+        class="liquidGlass-content"
+        class:scrollbar-hidden={!isScrollbarVisible}
+      >
+        {#if contextData}
+          <div class="content-text">
+            <p>{contextData}</p>
+          </div>
+        {:else}
+          <p class="loading-text">Loading...</p>
+        {/if}
+      </div>
+    {/if}
   </div>
 {/if}
