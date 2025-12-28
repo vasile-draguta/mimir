@@ -10,3 +10,11 @@ export interface HistoryEntry {
 export interface HistoryStorage {
   entries: HistoryEntry[];
 }
+
+export interface KeybindConfig {
+  key: string; // lowercase, e.g., 'k'
+  ctrl: boolean;
+  meta: boolean;
+  shift: boolean;
+  alt: boolean;
+}
