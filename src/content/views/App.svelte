@@ -9,6 +9,8 @@
     getSelectionText,
     getSelectionPosition,
   } from '../utils/selection';
+  import type { KeybindConfig } from '../../lib/types';
+  import { DEFAULT_KEYBIND, matchesKeybind } from '../../lib/keybind';
 
   let popoverOpen = $state(false);
   let selectedText = $state('');
@@ -18,6 +20,7 @@
   let isLoading = $state(false);
   let popoverElement = $state<HTMLDivElement | null>(null);
   let extensionEnabled = $state(true);
+  let currentKeybind = $state<KeybindConfig>(DEFAULT_KEYBIND);
 
   const { updateDarkMode } = useDarkMode(() => popoverElement);
 
@@ -110,17 +113,7 @@
   function handleKeybind(event: KeyboardEvent) {
     if (!extensionEnabled) return;
 
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    const modifierPressed = isMac ? event.metaKey : event.ctrlKey;
-
-    if (
-      event.key === 'k' &&
-      modifierPressed &&
-      !event.shiftKey &&
-      !event.altKey &&
-      !(isMac && event.ctrlKey) &&
-      !(!isMac && event.metaKey)
-    ) {
+    if (matchesKeybind(event, currentKeybind)) {
       event.preventDefault();
 
       const selectionData = getSelectionWithContext();
@@ -178,12 +171,19 @@
   }
 
   onMount(async () => {
-    const storage = await chrome.storage.local.get({ enabled: true });
+    const storage = await chrome.storage.local.get({
+      enabled: true,
+      keybind: DEFAULT_KEYBIND,
+    });
     extensionEnabled = storage.enabled as boolean;
+    currentKeybind = storage.keybind as KeybindConfig;
 
     chrome.storage.onChanged.addListener((changes) => {
       if (changes.enabled) {
         extensionEnabled = changes.enabled.newValue as boolean;
+      }
+      if (changes.keybind) {
+        currentKeybind = changes.keybind.newValue as KeybindConfig;
       }
     });
 
