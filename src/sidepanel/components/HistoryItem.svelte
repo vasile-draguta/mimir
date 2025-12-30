@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HistoryEntry } from '../../lib/types';
+  import Markdown from '../../lib/components/Markdown.svelte';
 
   interface Props {
     entry: HistoryEntry;
@@ -106,7 +107,7 @@
   <div class="history-item-details-wrapper">
     <div class="history-item-details">
       <div class="history-item-response">
-        <p>{entry.contextResponse}</p>
+        <Markdown content={entry.contextResponse} />
       </div>
       <div class="history-item-meta">
         <div class="history-item-meta-row">

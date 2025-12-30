@@ -2,6 +2,7 @@
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { onDestroy } from 'svelte';
+  import Markdown from '../../lib/components/Markdown.svelte';
 
   interface Props {
     isOpen: boolean;
@@ -138,7 +139,7 @@
           class:scrollbar-hidden={!isScrollbarVisible}
         >
           <div class="content-text">
-            <p>{contextData}</p>
+            <Markdown content={contextData} />
           </div>
         </div>
       {/if}
