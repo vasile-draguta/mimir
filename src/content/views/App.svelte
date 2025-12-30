@@ -73,19 +73,10 @@
   function handleMouseDown(event: MouseEvent) {
     if (event.button !== 0) return;
 
-    if (
-      popoverElement &&
-      popoverOpen &&
-      popoverElement.contains(event.target as Node)
-    ) {
-      return;
-    }
-
-    if (
-      popoverElement &&
-      popoverOpen &&
-      !popoverElement.contains(event.target as Node)
-    ) {
+    if (popoverOpen) {
+      if (popoverElement && popoverElement.contains(event.target as Node)) {
+        return;
+      }
       popoverOpen = false;
       return;
     }
@@ -190,7 +181,7 @@
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('selectionchange', handleSelectionChange);
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', handleEscapeKey, true);
     document.addEventListener('keydown', handleKeybind);
   });
 
@@ -198,7 +189,7 @@
     document.removeEventListener('mousedown', handleMouseDown);
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('selectionchange', handleSelectionChange);
-    document.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener('keydown', handleEscapeKey, true);
     document.removeEventListener('keydown', handleKeybind);
     if (holdTimer !== null) {
       clearTimeout(holdTimer);
