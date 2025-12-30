@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { onDestroy } from 'svelte';
 
   interface Props {
@@ -26,6 +27,20 @@
   let scrollTimeout: number | null = null;
 
   const SCROLLBAR_HIDE_DELAY = 2000;
+
+  function scaleOnly(
+    _node: Element,
+    { duration = 300, start = 0.95 }: { duration?: number; start?: number } = {},
+  ) {
+    return {
+      duration,
+      easing: cubicOut,
+      css: (t: number) => {
+        const scale = start + (1 - start) * t;
+        return `transform: translate(-50%, ${placement === 'top' ? '-100%' : '0%'}) scale(${scale})`;
+      },
+    };
+  }
 
   function handleScroll() {
     isScrollbarVisible = true;
@@ -68,16 +83,20 @@
 {#if isOpen}
   <div
     bind:this={popoverElement}
-    transition:fly={{
-      y: placement === 'top' ? -10 : 10,
+    in:scaleOnly={{
       duration: 300,
-      opacity: 0,
+      start: 0.95,
+    }}
+    out:scaleOnly={{
+      duration: 150,
+      start: 0.95,
     }}
     class="mimir-popover liquidGlass-wrapper"
+    class:placement-top={placement === 'top'}
+    class:placement-bottom={placement === 'bottom'}
     style:position="absolute"
     style:left="{position.x}px"
     style:top="{position.y}px"
-    style:transform="translate(-50%, {placement === 'top' ? '-100%' : '0%'})"
     style:z-index="999999"
     style:pointer-events="auto"
     style:width="448px"
@@ -92,23 +111,37 @@
     <div class="liquidGlass-effect"></div>
     <div class="liquidGlass-tint"></div>
     <div class="liquidGlass-shine"></div>
+    <div
+      class="liquidGlass-content-wrapper"
+      in:fly={{
+        y: placement === 'top' ? -10 : 10,
+        duration: 300,
+        opacity: 0,
+      }}
+      out:fly={{
+        y: placement === 'top' ? -10 : 10,
+        duration: 150,
+        opacity: 0,
+      }}
+    >
 
-    {#if isLoading}
-      <div class="loading-container">
-        <div class="spinner" role="status" aria-label="Loading">
-          <span class="sr-only">Loading...</span>
+      {#if isLoading}
+        <div class="loading-container">
+          <div class="spinner" role="status" aria-label="Loading">
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
-      </div>
-    {:else if contextData}
-      <div
-        bind:this={contentElement}
-        class="liquidGlass-content"
-        class:scrollbar-hidden={!isScrollbarVisible}
-      >
-        <div class="content-text">
-          <p>{contextData}</p>
+      {:else if contextData}
+        <div
+          bind:this={contentElement}
+          class="liquidGlass-content"
+          class:scrollbar-hidden={!isScrollbarVisible}
+        >
+          <div class="content-text">
+            <p>{contextData}</p>
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 {/if}
